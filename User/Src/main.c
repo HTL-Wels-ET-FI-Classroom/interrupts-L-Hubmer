@@ -55,6 +55,23 @@ int main(void)
 	/* touch screen calibration */
 	//	TS_Calibration();
 
+	/*GPIO Init*/
+	GPIO_InitTypeDef InitVar;
+	InitVar.Alternate = 0;
+	InitVar.Pull = GPIO_NOPULL;
+	InitVar.Speed = GPIO_SPEED_MEDIUM;
+
+	InitVar.Pin = GPIO_PIN_0;
+	InitVar.Mode = GPIO_MODE_IT_RISING;
+	HAL_GPIO_Init(GPIOA, &InitVar);
+
+	InitVar.Pin = GPIO_PIN_13;
+	InitVar.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(GPIOG, &InitVar);
+
+	/*NVIC Activation*/
+
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 	/* Clear the LCD and display basic starter text */
 	LCD_Clear(LCD_COLOR_BLACK);
 	LCD_SetTextColor(LCD_COLOR_YELLOW);
@@ -70,7 +87,7 @@ int main(void)
 
 	LCD_SetFont(&Font8);
 	LCD_SetColors(LCD_COLOR_MAGENTA, LCD_COLOR_BLACK); // TextColor, BackColor
-	LCD_DisplayStringAtLineMode(39, "copyright xyz", CENTER_MODE);
+	LCD_DisplayStringAtLineMode(39, "copyright Hubmer", CENTER_MODE);
 
 	int cnt = 0;
 	/* Infinite loop */
@@ -130,4 +147,8 @@ static int GetTouchState (int* xCoord, int* yCoord) {
 	return touchclick;
 }
 
-
+void EXTI0_IRQHandler(void)
+{
+	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_0);
+	HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13);
+}
