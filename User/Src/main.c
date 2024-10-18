@@ -201,5 +201,4 @@ void EXTI3_IRQHandler(void)
 {
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_3);
 	TextColor ++;
-	HAL_Delay(10);
 }
